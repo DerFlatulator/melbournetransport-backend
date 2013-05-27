@@ -1,0 +1,162 @@
+==========================================================================================================
+==== NEW SERVICE (ptv.vic.gov.au)
+==========================================================================================================
+
+$HOST = http://ptv.vic.gov.au
+$NEXT5 = next5/diva
+
+For "Autocomplete" (Gives the stop ID required to find the next trains from that station)
+    $HOST/transport/direct/autocomplete-search.php?
+	term=$STOPNAME&mode=2&search-for=stops&type=diva&grouped=1
+
+	
+For next 5 trains from this station:
+    $HOST/transport/direct/chronos.php?stopId=$STOPID&limit=10&mode=0
+
+
+Stop IDs start at 10001002
+      & finish at 10001223
+
+Get all line info in beautiful JSON (JSON!)
+http://ptv.vic.gov.au/next5/runstops/?runId=$LINEID&modeId=train
+  data.values.platform[i].stop.location_name  // e.g. "Westall"
+  data.values.platform[i].stop.suburb  // e.g. "Clayton"
+  data.values.platform[i].stop.stop_id // e.g. 10001002
+  data.values.platform[0].direction.line.line_id // main line id
+  data.values.platform[i].time_timetable_utc // 2013-04-23T22:11:00Z
+  data.values.platform[i].time_realtime_utc // actual arrival time  
+
+GET ALL LINES:
+http://ptv.vic.gov.au/transport/direct/autocomplete-search.php?term=Line&mode=2&search-for=lines&type=diva&grouped=1
+ sample line of result: 
+  line-1|5|South Morang Line||58
+  TRAIN|LINE-ID|LINE-NAME||???
+
+DETAILS ABOUT A STATION
+http://ptv.vic.gov.au/getting-around/stations-and-stops/view/$STOPID
+
+FIRST 40 STATIONS
+http://ptv.vic.gov.au/transport/direct/autocomplete-search.php?term=Station&mode=2&search-for=stops&type=diva
+
+FROM STOP NAME, GET JSON DETAILS
+http://ptv.vic.gov.au/transport/direct/stopfinder.php?term=$STOPNAME&object_type=2
+
+GET DESTINATION OF TRAIN, AND SUBSEQUENT TRAIN-DIRECTION-ID
+http://ptv.vic.gov.au/next5/Next5Form/field/TrainLineID/load/$LINEID
+  [{k: 26,v: "To City"},{k: 41,v: "To Hurstbridge"}]
+
+==========================================================================================================
+==== STATION AND ROUTE DETAILS (metrotrains.com.au)
+==========================================================================================================
+
+http://m.metrotrains.com.au/lines?device=mobile
+http://m.metrotrains.com.au/lines/<line-name-lower-case>?device=mobile
+http://m.metrotrains.com.au/stations/<station-name-lower-case>?device=mobile
+
+==========================================================================================================
+==== WIKIPEDIA (Last Resort)
+==========================================================================================================
+
+http://simple.wikipedia.org/wiki/Special:Export/List_of_Melbourne_railway_stations
+http://en.wikipedia.org/wiki/Special:Export/List_of_Melbourne_railway_stations
+http://en.wikipedia.org/wiki/List_of_Melbourne_railway_stations
+
+==========================================================================================================
+==== OLD SERVICE (metlink.mobi)
+==========================================================================================================
+
+
+URL
+
+    /mv/XSLT_REQUEST
+        make a request for routes or services
+
+    /mv/XSLT_DM_REQUEST
+        make a reqest for times for next services
+
+QUERY PARAMETERS
+ 
+    itdLPxx_mGroup = { metTrain, metTram, metBus, regBus, vLine }      
+        group of timetables
+
+    itdLPxx_lineMainID = <lineMainID>
+        ID of route
+
+    itdLPxx_lineID = <lineID>
+        ID of route (inc direction)  
+
+    sessionID = 0 
+        required for `DM' requests
+
+    mode = direct
+        required for `DM' requests
+
+    type_dm = stopID
+        required for `DM' requests
+ 
+    dmLineSelectionAll = 1 // anything, I think
+        required for `DM' requests  (I'm detecting a pattern here...)
+  
+    name_dm = 10001223 // What the hell is this?
+
+    deleteAssignedStops_dm = 1&
+
+
+    itdLPxx_routeFilter = <lineID>
+        line ID of requested service in `DM' requests
+
+    limit = { 500, AnyInteger? }
+
+
+
+sessionID=0&
+mode=direct&
+type_dm=stopID&
+dmLineSelectionAll=1&
+name_dm=10001223&
+itdLPxx_stopID=45794&
+itdLPxx_routeID=27&
+itdLPxx_routeFilter=27&
+deleteAssignedStops_dm=1&
+limit=500&
+itdLPxx_font=
+
+
+VALUES
+
+    <lineMainID>
+        // TRAINS
+        "1" => "Alamein"
+        "2" => "Belgrave"
+        "3" => "Craigieburn"
+        "4" => "Cranbourne"
+        "5" => "South Morang (Epping)"
+        "6" => "Frankston"
+        "7" => "Glen Waverley"
+        "8" => "Hurstbridge"
+        "9" => "Lilydale"
+        "11" => "Pakenham"
+        "12" => "Sandringham"
+        "13" => "Stony Point"
+        "14" => "Sunbury"
+        "15" => "Upfield"
+        "16" => "Werribee"
+        "17" => "Williamstown"
+        "1482" => "Showgrounds / Flemington Racecourse"
+        "5612" => "City Loop"
+        
+    <lineID>
+        Inbound = (<lineMainID> < 9) ? <lineMainID> + 18
+                                     : <lineMainID> + 16
+            SPECIAL CASES: // Seriously, what the hell?
+                <lineMainID> == 9 => 2
+                <lineMainID> == 5612 => 7627         
+                <lineMainID> == 1482 => 3509 
+
+        Outbound = Inbound + 15
+            SPECIAL CASES:
+                Inbound == (2 || 7627 || 3509) => Inbound - 1
+
+
+
+         
