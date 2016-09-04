@@ -11,7 +11,7 @@ For "Autocomplete" (Gives the stop ID required to find the next trains from that
 
 	
 For next 5 trains from this station:
-    $HOST/transport/direct/chronos.php?stopId=$STOPID&limit=10&mode=0
+    $HOST//www.ptv.vic.gov.au/langsing/stop-services?stopId=$STOPID&limit=10&mode=0
 
 
 Stop IDs start at 10001002
